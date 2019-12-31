@@ -22,7 +22,7 @@
 #' @param vafCol manually specify column name for vafs. Default looks for column 't_vaf'
 #' @param tsb specify sample names (Tumor_Sample_Barcodes) for which clustering has to be done.
 #' @param index the available methods for the diversity indices estimate. The parames should be "diversity" or "taxonomic", see \strong{Details} for more information.
-#' @param region_num divide the vaf into N(=10 default) parts.
+#' @param bin_size divide the vaf into N(=10 default) bins.
 #' @param dirichlet Deprecated! No longer supported. uses nonparametric dirichlet process for clustering. Default FALSE - uses finite mixture models.
 #' @param minVaf filter low frequency variants. Low vaf variants maybe due to sequencing error. Default 0. (on the scale of 0 to 1)
 #' @param maxVaf filter high frequency variants. High vaf variants maybe due to copy number alterations or impure tumor. Default 1. (on the scale of 0 to 1)
@@ -40,6 +40,9 @@
 #'
 #' @examples
 #' \dontrun{
+#'
+#' library(THindex)
+#' library(maftools)
 #' laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
 #' laml <- read.maf(maf = laml.maf)
 #' TCGA.ab.het <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "diversity")
@@ -55,9 +58,10 @@
 #' @import magrittr
 #' @import dplyr
 #' @import tidyr
+#' @import mclust
 #' @export
 
-inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5, vafCol = NULL, segFile = NULL, ignChr = NULL, minVaf = 0, maxVaf = 1, useSyn = FALSE, dirichlet = FALSE, region_num = 10) {
+inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5, vafCol = NULL, segFile = NULL, ignChr = NULL, minVaf = 0, maxVaf = 1, useSyn = FALSE, dirichlet = FALSE, bin_size = 10) {
   if (is.null(tsb)) {
     tsb = as.character(getSampleSummary(x = maf)[1:top, Tumor_Sample_Barcode])
   }
@@ -158,7 +162,7 @@ inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5,
         tsb.dat$MATH = pat.math
         tsb.dat$MedianAbsoluteDeviation = pat.mad
 
-        diveristy = diversity_partition( data = tsb.dat, method = index, minVaf = minVaf, maxVaf = maxVaf, region_num = region_num )$index
+        diveristy = diversity_partition( data = tsb.dat, method = index, minVaf = minVaf, maxVaf = maxVaf, bin_size = bin_size )$index
 
         tsb.dat[,names(diveristy[1])] = diveristy[1]
         tsb.dat[,names(diveristy[2])] = diveristy[2]

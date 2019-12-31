@@ -1,14 +1,14 @@
 # functions for TH indices estimating.
 
-diversity_partition = function( data  , method = "diversity", region_num = 10, minVaf = 0, maxVaf = 1){
-  # devide the VAF into {region_num} regions and calculate the diversity
+diversity_partition = function( data  , method = "diversity", bin_size = 10, minVaf = 0, maxVaf = 1){
+  # devide the VAF into {bin_size} regions and calculate the diversity
 
   if( method !="diversity" &  method != "taxonomic" ){
     stop("The available indicies include diveristy or taxonomic Indicies")
   }
 
   Summ = data %>%
-    mutate(Group =  cut( t_vaf, breaks = seq( minVaf, maxVaf, length.out = region_num+1), labels = seq(1, region_num ) ) ) %>%
+    mutate(Group =  cut( t_vaf, breaks = seq( minVaf, maxVaf, length.out = bin_size+1), labels = seq(1, bin_size ) ) ) %>%
     group_by(Group) %>%
     summarise(Num = n() ) %>%
     mutate(prop = Num / sum(Num),
@@ -27,7 +27,7 @@ diversity_partition = function( data  , method = "diversity", region_num = 10, m
 
     SummD = Summ %>% dplyr::select(Group, Num) %>%
       spread(key = Group, value = Num )
-    x = 1:region_num; names(x) = x; dist = dist(x) #distance.
+    x = 1:bin_size; names(x) = x; dist = dist(x) #distance.
 
     taxondis = taxondive(SummD, x )
     index = c(taxondis$D, taxondis$Dstar ); names(index) = c("Delt","Dstar")

@@ -16,7 +16,7 @@ inferHeterogeneityPlus(
   maxVaf = 1,
   useSyn = FALSE,
   dirichlet = FALSE,
-  region_num = 10
+  bin_size = 10
 )
 }
 \arguments{
@@ -42,7 +42,7 @@ inferHeterogeneityPlus(
 
 \item{dirichlet}{Deprecated! No longer supported. uses nonparametric dirichlet process for clustering. Default FALSE - uses finite mixture models.}
 
-\item{region_num}{divide the vaf into N(=10 default) parts.}
+\item{bin_size}{divide the vaf into N(=10 default) bins.}
 }
 \value{
 list of clustering tables, including:
@@ -72,6 +72,9 @@ When index = "taxonomic", the taxonomic diveristy(Delt) and taxonomic distinctne
 }
 \examples{
 \dontrun{
+
+library(THindex)
+library(maftools)
 laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
 laml <- read.maf(maf = laml.maf)
 TCGA.ab.het <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "diversity")

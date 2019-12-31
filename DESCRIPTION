@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Qingjian Chen
 Maintainer: The package maintainer <chenqingjian2010@163.com>
 Description: using the ecology ways to estimate the diverisity index of TCGA data.
-License: What license is it under?
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Suggests: 

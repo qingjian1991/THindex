@@ -24,7 +24,7 @@ use_package("maftools")
 #> Use requireNamespace("dplyr", quietly = TRUE) to test if package is
 #>  installed, then use dplyr::fun() to refer to functions.
 
-use_gpl3_license()
+use_gpl3_license("GPLv3")
 use_vignette("THindex")
 #5) How do I Document My Functions?
 devtools::document()
@@ -38,7 +38,7 @@ devtools::install(build_vignettes = T)
 
 
 library(THindex)
-
+library(maftools)
 
 laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
 laml <- read.maf(maf = laml.maf)
