@@ -40,6 +40,9 @@
 #'
 #' @examples
 #' \dontrun{
+#'
+#' library(THindex)
+#' library(maftools)
 #' laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
 #' laml <- read.maf(maf = laml.maf)
 #' TCGA.ab.het <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "diversity")
@@ -55,6 +58,7 @@
 #' @import magrittr
 #' @import dplyr
 #' @import tidyr
+#' @import mclust
 #' @export
 
 inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5, vafCol = NULL, segFile = NULL, ignChr = NULL, minVaf = 0, maxVaf = 1, useSyn = FALSE, dirichlet = FALSE, region_num = 10) {

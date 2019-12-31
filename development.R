@@ -38,7 +38,7 @@ devtools::install(build_vignettes = T)
 
 
 library(THindex)
-
+library(maftools)
 
 laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
 laml <- read.maf(maf = laml.maf)
