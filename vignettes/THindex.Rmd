@@ -1,0 +1,59 @@
+---
+title: "THindex"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{THindex}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+In this package, we use the ecology methods to estimate the Tumor Heterogeneity(TH) based on their mutated loci of variant allele frequencis(VAF).
+
+The inferHeterogeneityPlus estimate the TH based on two different methods in the Package [vegan](https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf): 1) **Diveristy indices** and 2) **Taxonomic indices**.
+
+1. Diversity indices
+
+Function diversity finds the most commonly used diversity indices.
+
+$H=-\sum_{i=1}^{S}~p_ilogp_i$      Shannon (1)
+
+
+$D=\frac{1}{\sum_{i=1}^{S}~p_i^2} \\$       inverse Simpson (2)
+
+Where $p_i$ is the proportion of species $i$ and $S$ is the number of species. For the tumor data, the VAFs of mutated loci in the tumor were assigned to i-th of S bins, and the parameter $p_i$ the proportion of mutated loci belonging to the bins. Here, we set the bin size to 10 (Parameter **region_num** controls the number of bins), yielding enough information to represent the distribution for proprotions of VAFs.
+
+2. Taxonomic diversity.
+
+The simple diveristy above only consider species identity: all species are euqally different. In contrast, taxonimic diveristy indices judge the differences of species. 
+
+$\Delta=\frac{\sum\sum_{i<j}~\omega_ijX_iX_j}{n(n-1)/2}$    Taxonomic diveristy  (3)
+
+$\Delta^*=\frac{\sum\sum_{i<j}~\omega_ijX_iX_j}{\sum\sum_{i<j}~X_iX_j}$      Taxonomic distinctness (4)
+
+These equations give the index values for Taxonomic difference, and summation goes over species $i$ and $j$, and $\omega$ are the taxonomic distances among taxa, $X$ are species abundances, and $n$ is the total abundance for a site.
+
+For the tumor data, the distance of adjacent bins is set 1. For example, if the bins are set 5, then the distance between bin #1 and #5 is 4. If the numbers of occurrences for the 5 bins are (2,4,0,4,2) or (0,2,4,4,3), the former one has higher Taxonomic diversity than the latter one.  
+
+
+
+```{r setup, tidy=TRUE}
+
+library(THindex)
+library(maftools)
+
+laml.maf <- system.file("extdata", "tcga_laml.maf.gz", package = "maftools")
+laml <- read.maf(maf = laml.maf)
+TCGA.ab.het <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "diversity")
+print(TCGA.ab.het$diveristy)
+
+TCGA.ab.het1 <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "taxonomic")
+print(TCGA.ab.het1$diveristy)
+
+```
