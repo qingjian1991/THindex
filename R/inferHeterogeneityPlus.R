@@ -127,6 +127,7 @@ inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5,
   dat.tsb$Chromosome = gsub(pattern = "chr", replacement = "",
                             x = dat.tsb$Chromosome, fixed = TRUE)
   dat.tsb = suppressWarnings(dat.tsb[order(as.numeric(Chromosome))])
+
   for (i in 1:length(tsb)) {
     message(paste("Processing ", tsb[i], "..",
                   sep = ""))

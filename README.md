@@ -1,32 +1,37 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # THindex
+
 Tumor Heterogeneity Index Estimating
 
 ## Concepts
 
-In this package, we use the ecology methods to estimate the Tumor Heterogeneity(TH) based on their mutated loci of variant allele frequencis(VAF).
+In this package, we use the ecology methods to estimate the Tumor
+Heterogeneity(TH) based on their mutated loci of variant allele
+frequencis(VAF).
 
-The inferHeterogeneityPlus estimate the TH based on two different methods in the Package [vegan](https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf):   
+The inferHeterogeneityPlus estimate the TH based on two different
+methods in the Package
+[vegan](https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf):
 
-* Diveristy indices
+-   Diveristy indices
+-   Taxonomic indices.
 
-* Taxonomic indices.   
-  
-  See also <http://www.coastalwiki.org/wiki/Measurements_of_biodiversity> for the concepts.
+See also <http://www.coastalwiki.org/wiki/Measurements_of_biodiversity>
+for the concepts.
 
-## Dependencies  
+## Installation
 
-Required R packages including:
+You can install the development version of THindex from
+[GitHub](https://github.com/) with:
 
-(1)maftools 
-
-(2)mclust 
-
-(3)tidyverse 
-
-(4)data.table 
-
-Installing the package by the `devtools`.
-```R
-devtools::install_github("qingjian1991/THindex")
+``` r
+# install.packages("remotes")
+remotes::install_github("qingjian1991/THindex")
 ```
 
+## Documentation
+
+The overview of usage could be found at [THindex online
+vignette](https://rpubs.com/cqj_00/THindex).

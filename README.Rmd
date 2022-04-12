@@ -1,0 +1,45 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# THindex
+
+Tumor Heterogeneity Index Estimating
+
+## Concepts
+
+In this package, we use the ecology methods to estimate the Tumor Heterogeneity(TH) based on their mutated loci of variant allele frequencis(VAF).
+
+The inferHeterogeneityPlus estimate the TH based on two different methods in the Package [vegan](https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf):   
+
+* Diveristy indices
+* Taxonomic indices.   
+  
+See also <http://www.coastalwiki.org/wiki/Measurements_of_biodiversity> for the concepts.
+
+
+## Installation
+
+You can install the development version of THindex from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("qingjian1991/THindex")
+```
+
+## Documentation
+
+The overview of usage could be found at [THindex online vignette](https://rpubs.com/cqj_00/THindex).
+
+

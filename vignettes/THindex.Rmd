@@ -1,11 +1,66 @@
 ---
 title: "THindex"
-output: rmarkdown::html_vignette
+output:
+  html_document:
+    df_print: paged
+    highlight: pygments
+    self_contained: yes
+    theme: united
+    toc: yes
+    toc_depth: 5
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+date: "`r Sys.Date()`"
+
 vignette: >
-  %\VignetteIndexEntry{THindex}
+  %\VignetteIndexEntry{MPTevol}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+<style type="text/css">
+    .list-group-item.active,.list-group-item.active:focus,.list-group-item.active:hover {
+    background-color: #007510;
+    }
+    body {
+      font-family: Calibri, helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 127%;
+      color: #750400;
+    }
+    h2 {
+      font-size: 121%;
+      color: #750400;
+    }    
+    h3 {
+      font-weight: bold;
+      font-size: 18px;
+      color: #750400;
+      line-height: 2.4;
+    }
+    h4 {
+      font-weight: bold;
+      font-size: 17px;
+      color: #750400;
+      line-height: 2.1;
+    }
+    h5{
+      font-size: 16px;
+      font-weight: bold;
+      color: #750400;
+      line-height: 1.9;
+    }
+    a, a:hover {
+      font-size: 16px;
+      color: #5bc227;
+    }
+
+</style>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -14,13 +69,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-##1. Concepts
+## 1. Concepts
 
-In this package, we use the ecology methods to estimate the Tumor Heterogeneity(TH) based on their mutated loci of variant allele frequencis(VAF).
+In this package, we use the ecology methods to estimate the Tumor Heterogeneity(TH) based on their mutated loci of variant allele frequency(VAF).
 
-The inferHeterogeneityPlus estimate the TH based on two different methods in the Package [vegan](https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf): 1) **Diveristy indices** and 2) **Taxonomic indices**. See also <http://www.coastalwiki.org/wiki/Measurements_of_biodiversity> for the concepts.
+The function `inferHeterogeneityPlus` estimates the TH based on two different methods in the Package [vegan](https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf)
 
-####1. Diversity indices
+1. **Diveristy indices** 
+
+2. **Taxonomic indices** 
+
+See also <http://www.coastalwiki.org/wiki/Measurements_of_biodiversity> for the concepts.
+
+#### 1.1 Diversity indices
 
 Function diversity finds the most commonly used diversity indices.
 
@@ -31,7 +92,7 @@ $D=\frac{1}{\sum_{i=1}^{S}~p_i^2} \\$       Inverse Simpson Index(2)
 
 Where $p_i$ is the proportion of species $i$ and $S$ is the number of species. For the tumor data, the VAFs of mutated loci in the tumor were assigned to i-th of S bins, and the parameter $p_i$ the proportion of mutated loci belonging to the bins. Here, we set the bin size to 10 (Parameter **bin_size** controls the number of bins), yielding enough information to represent the distribution for proprotions of VAFs.
 
-####2. Taxonomic diversity.
+#### 1.2 Taxonomic diversity.
 
 The simple diveristy above only consider species identity: all species are euqally different. In contrast, taxonimic diveristy indices judge the differences of species. 
 
@@ -43,9 +104,9 @@ These equations give the index values for Taxonomic difference, and summation go
 
 For the tumor data, the distance of adjacent bins is set 1. For example, if the bins are set 5, then the distance between bin #1 and #5 is 4. If the numbers of occurrences for the 5 bins are (2,4,0,4,2) or (0,2,4,4,3), the former one has higher Taxonomic diversity than the latter one.  
 
-##2. Example of codes
+## 2. Example of codes
 
-We use the function "inferHeterogeneityPlus" in the THindex to estimate the Tumor Heterogeneity indices.
+We use the function `inferHeterogeneityPlus` in the THindex to estimate the Tumor Heterogeneity.
 
 ```{r setup, tidy=TRUE, warning = FALSE}
 
@@ -58,9 +119,9 @@ laml <- read.maf(maf = laml.maf)
 
 ```
 
-The inferHeterogeneityPlus is modified from the function "inferHeterogeneity" in maftools. The inputtings are largely overlapped.
+The function `inferHeterogeneityPlus` is modified from the function `inferHeterogeneity` of [maftools](https://www.bioconductor.org/packages/release/bioc/html/maftools.html). The input parameters are largely overlapped between the two functions.
 
-The index controls the functions of TH index. When index = "diveristy", shannon and inverse Simpson indices are calculated(Eqs 1 and 2).
+The parameter `index` of `inferHeterogeneityPlus` controls the functions of TH index. If `index = "diveristy"`, shannon and inverse Simpson indices are calculated(Eqs 1 and 2).
 
 ```{r, tidy=TRUE, results='asis', warning=FALSE}
 TCGA.ab.het <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "diversity")
@@ -68,7 +129,7 @@ TCGA.ab.het <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', inde
 knitr::kable(TCGA.ab.het$diveristy)
 ```
 
-When index = "taxonomic", Taxonomic diversity and Taxonomic distinctness are calculated (Eqs 3 and Eqs 4).
+If `index = "taxonomic"`, Taxonomic diversity and Taxonomic distinctness are calculated (Eqs 3 and Eqs 4).
 
 ```{r, tidy=TRUE, results='asis', warning=FALSE}
 TCGA.ab.het1 <- inferHeterogeneityPlus(maf = laml, vafCol = 'i_TumorVAF_WU', index = "taxonomic")
