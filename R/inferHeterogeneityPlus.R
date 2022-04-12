@@ -52,24 +52,19 @@
 #' @seealso \code{\link[maftools]{plotClusters}}, \code{\link[maftools]{inferHeterogeneity}}
 #'
 #' @import data.table
-#' @import maftools
-#' @import vegan
-#' @import tidyverse
-#' @import magrittr
 #' @import dplyr
-#' @import tidyr
-#' @import mclust
+#' @import vegan
 #' @export
 
 inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5, vafCol = NULL, segFile = NULL, ignChr = NULL, minVaf = 0, maxVaf = 1, useSyn = FALSE, dirichlet = FALSE, bin_size = 10) {
   if (is.null(tsb)) {
-    tsb = as.character(getSampleSummary(x = maf)[1:top, Tumor_Sample_Barcode])
+    tsb = as.character(maftools::getSampleSummary(x = maf)[1:top, Tumor_Sample_Barcode])
   }
 
   INDICES <- c("diversity", "taxonomic")
   index <- match.arg(index, INDICES)
 
-  dat.tsb = subsetMaf(maf = maf, tsb = tsb, includeSyn = useSyn,
+  dat.tsb = maftools::subsetMaf(maf = maf, tsb = tsb, includeSyn = useSyn,
                       mafObj = FALSE)
   if (nrow(dat.tsb) == 0) {
     stop(paste(tsb, "not found in MAF"))
@@ -94,7 +89,7 @@ inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5,
     }
   }
   if (!is.null(segFile)) {
-    seg.dat = readSegs(segFile)
+    seg.dat = maftools:::readSegs(segFile)
     seg.dat = seg.dat[Chromosome %in% onlyContigs]
     seg.dat = seg.dat[order(as.numeric(Chromosome))]
     setkey(x = seg.dat, Chromosome, Start_Position, End_Position)
@@ -141,7 +136,7 @@ inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5,
       if (!is.null(segFile)) {
         if (tsb[i] %in% seg.tsbs) {
           seg = seg.dat[Sample %in% tsb[i]]
-          seg.res = filterCopyNumber(seg, tsb.dat, tempCheck,
+          seg.res = maftools:::filterCopyNumber(seg, tsb.dat, tempCheck,
                                      tsb[i])
           tsb.dat = seg.res[[1]]
           tsb.dat.cn.vars = seg.res[[2]]
@@ -149,7 +144,7 @@ inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5,
         }
       }
       if (dirichlet) {
-        tsb.dat = dirichletClusters(tsb.dat)
+        tsb.dat = maftools:::dirichletClusters(tsb.dat)
       }
       else {
         tsb.cluster = mclust::densityMclust(tsb.dat[,
@@ -169,7 +164,7 @@ inferHeterogeneityPlus = function (maf, tsb = NULL,index = "diversity", top = 5,
         tsb.dat[,names(diveristy[2])] = diveristy[2]
 
       }
-      tsb.dat = refineClusters(clusters = tsb.dat)
+      tsb.dat = maftools:::refineClusters(clusters = tsb.dat)
       if (tempCheck == 1) {
         tsb.dat = rbind(tsb.dat, tsb.dat.cn.vars, fill = TRUE)
       }

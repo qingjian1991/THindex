@@ -13,22 +13,17 @@
 #' @param useSyn Use synonymous variants. Default FALSE.
 
 #' @import data.table
-#' @import maftools
 #' @import vegan
-#' @import tidyverse
 #' @import magrittr
-#' @import dplyr
-#' @import tidyr
-#' @import mclust
 #' @export
 
 inferDriverDominanceScore = function (maf, tsb = NULL, driver =NULL , topGenes = 10, vafCol = NULL, segFile = NULL, ignChr = NULL, minVaf = 0, maxVaf = 1, useSyn = FALSE ) {
 
   if (is.null(tsb)) {
-    tsb = as.character(getSampleSummary(x = maf)[, Tumor_Sample_Barcode])
+    tsb = as.character(maftools::getSampleSummary(x = maf)[, Tumor_Sample_Barcode])
   }
 
-  dat.tsb = subsetMaf(maf = maf, tsb = tsb, includeSyn = useSyn,
+  dat.tsb = maftools::subsetMaf(maf = maf, tsb = tsb, includeSyn = useSyn,
                       mafObj = FALSE)
 
   if (nrow(dat.tsb) == 0) {
@@ -55,7 +50,7 @@ inferDriverDominanceScore = function (maf, tsb = NULL, driver =NULL , topGenes =
   }
 
   if (!is.null(segFile)) {
-    seg.dat = readSegs(segFile)
+    seg.dat = maftools:::readSegs(segFile)
     seg.dat = seg.dat[Chromosome %in% onlyContigs]
     seg.dat = seg.dat[order(as.numeric(Chromosome))]
     setkey(x = seg.dat, Chromosome, Start_Position, End_Position)
@@ -90,7 +85,7 @@ inferDriverDominanceScore = function (maf, tsb = NULL, driver =NULL , topGenes =
   dat.tsb = suppressWarnings(dat.tsb[order(as.numeric(Chromosome))])
 
   if( is.null(driver) ){
-    driver = as.character(getGeneSummary(x = maf)[1:topGenes , Hugo_Symbol])
+    driver = as.character(maftools:::getGeneSummary(x = maf)[1:topGenes , Hugo_Symbol])
   }
 
   dat.tsb = dat.tsb[ Hugo_Symbol %in% driver]
@@ -99,7 +94,7 @@ inferDriverDominanceScore = function (maf, tsb = NULL, driver =NULL , topGenes =
     group_by(Hugo_Symbol, Tumor_Sample_Barcode) %>%
     summarise( count = n() ) %>%
     reshape2::dcast( Hugo_Symbol ~ Tumor_Sample_Barcode, fill = 0) %>%
-    column_to_rownames(var = "Hugo_Symbol")
+    tibble::column_to_rownames(var = "Hugo_Symbol")
 
   dat.tsb.RowSums = rowSums(dat.tsb1, na.rm = T) #Mutated Genes
   dat.tsb.ColSums = colSums(dat.tsb1, na.rm = T) #Mutated Samples.
@@ -109,7 +104,7 @@ inferDriverDominanceScore = function (maf, tsb = NULL, driver =NULL , topGenes =
     apply( 2, function(x) x/sum(x, na.rm = T)) %>%
     apply(1 , sum, na.rm = T)/dat.tsb.RowSums
 
-  GeneDominancesSummary = getGeneSummary(x = maf)[Hugo_Symbol %in% driver] %>%
+  GeneDominancesSummary = maftools:::getGeneSummary(x = maf)[Hugo_Symbol %in% driver] %>%
     mutate(DominanceScores = GeneDominances) %>%
     mutate(Occurence = AlteredSamples/length(tsb) )
 
